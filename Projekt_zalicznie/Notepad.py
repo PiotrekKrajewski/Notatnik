@@ -1,12 +1,12 @@
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, qApp, QMenu, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, qApp, QMenu, QMessageBox, QWidget, QTextEdit, \
+    QVBoxLayout
 
 
 class Notepad(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        #self.textEditBox = QTextEdit()
+    def __init__(self, title, parent):
+        super(Notepad, self).__init__(parent)
         self.initUI()
 
     def initUI(self):
@@ -16,7 +16,7 @@ class Notepad(QMainWindow):
         menuBar = self.menuBar()
         plikMenu = menuBar.addMenu('Plik')
         editMenu = menuBar.addMenu('Edytuj')
-        formatMenu = menuBar.addMenu('')
+        #formatMenu = menuBar.addMenu('')
         pomocMenu = menuBar.addMenu('Pomoc')
 
         # plik
@@ -36,13 +36,12 @@ class Notepad(QMainWindow):
         zapiszJako.setShortcut('Ctrl+Shift+S')
         plikMenu.addAction(zapiszJako)
 
-
         exitApp = QAction('Wyjście', self)
         exitApp.setShortcut('Ctrl+Q')
         exitApp.triggered.connect(qApp.quit)
         plikMenu.addAction(exitApp)
 
-        #edycja
+        # edycja
         cofnij = QAction('Cofnij', self)
         cofnij.setShortcut('Ctrl+Z')
         editMenu.addAction(cofnij)
@@ -71,6 +70,9 @@ class Notepad(QMainWindow):
         godzinaData.setShortcut('F5')
         editMenu.addAction(godzinaData)
 
+        #format
+
+
         # pomoc
         infoQt = QAction('Qt', self)
         infoQt.setShortcut('Ctrl+T')
@@ -91,6 +93,25 @@ class Notepad(QMainWindow):
     def notatnikInfo(self):
         QMessageBox.about(self, 'Aplikacja', 'Notatnik wzorowany na tym z systemu Windows 10')
 
+
+class TextBox(QWidget):
+    def __init__(self):
+        super(TextBox).__init__()
+        self.initUI()
+
+
+        menubar = Notepad('Notatnik', self)
+        pole = QTextEdit()
+        layout = QVBoxLayout()
+        layout.addWidget(menubar)
+        layout.addWidget(self.pole)
+        self.setLayout(layout)
+
+        self.show()
+
+
+
+
 app = QApplication(sys.argv)
-exe = Notepad()
+exe = TextBox()
 sys.exit(app.exec_())
