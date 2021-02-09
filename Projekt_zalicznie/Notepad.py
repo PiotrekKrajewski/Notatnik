@@ -1,117 +1,80 @@
+import os
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, qApp, QMenu, QMessageBox, QWidget, QTextEdit, \
-    QVBoxLayout
+from PyQt5.QtCore import QDir
+from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QApplication, QFileDialog, QPushButton, QHBoxLayout
 
 
-class Notepad(QMainWindow):
-    def __init__(self, title, parent):
-        super(Notepad, self).__init__(parent)
+#spróbować bez self zadeklarować text edit i przyciski
+
+
+class Notepad(QWidget):
+    def __init__(self):
+        super(Notepad, self).__init__()
+        self.textEdit = QTextEdit(self)
+        self.save_btn = QPushButton('Zapisz')
+        self.open_btn = QPushButton('Otwórz')
         self.initUI()
 
     def initUI(self):
         self.setWindowTitle('Notatnik')
         self.setFixedSize(800, 600)
 
-        menuBar = self.menuBar()
-        plikMenu = menuBar.addMenu('Plik')
-        editMenu = menuBar.addMenu('Edytuj')
-        #formatMenu = menuBar.addMenu('')
-        pomocMenu = menuBar.addMenu('Pomoc')
-
-        # plik
-        nowy = QAction('Nowy', self)
-        nowy.setShortcut('Ctrl+N')
-        plikMenu.addAction(nowy)
-
-        otworz = QAction('Otwórz...', self)
-        otworz.setShortcut('Ctrl+O')
-        plikMenu.addAction(otworz)
-
-        zapisz = QAction('Zapisz', self)
-        zapisz.setShortcut('Ctrl+S')
-        plikMenu.addAction(zapisz)
-
-        zapiszJako = QAction('Zapisz jako...', self)
-        zapiszJako.setShortcut('Ctrl+Shift+S')
-        plikMenu.addAction(zapiszJako)
-
-        exitApp = QAction('Wyjście', self)
-        exitApp.setShortcut('Ctrl+Q')
-        exitApp.triggered.connect(qApp.quit)
-        plikMenu.addAction(exitApp)
-
-        # edycja
-        cofnij = QAction('Cofnij', self)
-        cofnij.setShortcut('Ctrl+Z')
-        editMenu.addAction(cofnij)
-
-        wytnij = QAction('Wytnij', self)
-        wytnij.setShortcut('Ctrl+X')
-        editMenu.addAction(wytnij)
-
-        kopiuj = QAction('Kopiuj', self)
-        kopiuj.setShortcut('Ctrl+C')
-        editMenu.addAction(kopiuj)
-
-        wklej = QAction('Wklej', self)
-        wklej.setShortcut('Ctrl+V')
-        editMenu.addAction(wklej)
-
-        znajdz = QAction('Znajdź', self)
-        znajdz.setShortcut('Ctrl+F')
-        editMenu.addAction(znajdz)
-
-        zaznaczWszystko = QAction('Zaznacz wszystko', self)
-        zaznaczWszystko.setShortcut('Ctrl+A')
-        editMenu.addAction(zaznaczWszystko)
-
-        godzinaData = QAction('Godzina/data', self)
-        godzinaData.setShortcut('F5')
-        editMenu.addAction(godzinaData)
-
-        #format
-
-
-        # pomoc
-        infoQt = QAction('Qt', self)
-        infoQt.setShortcut('Ctrl+T')
-        infoQt.triggered.connect(qApp.aboutQt)
-
-        infoApp = QAction('App', self)
-        infoApp.setShortcut('Ctrl+A')
-        infoApp.triggered.connect(self.notatnikInfo)
-
-        # pomoc/ info
-        infoMenu = QMenu('Informacje', self)
-        infoMenu.addAction(infoQt)
-        infoMenu.addAction(infoApp)
-        pomocMenu.addMenu(infoMenu)
-
-        self.show()
-
-    def notatnikInfo(self):
-        QMessageBox.about(self, 'Aplikacja', 'Notatnik wzorowany na tym z systemu Windows 10')
-
-
-class TextBox(QWidget):
-    def __init__(self):
-        super(TextBox).__init__()
-        self.initUI()
-
-
-        menubar = Notepad('Notatnik', self)
-        pole = QTextEdit()
         layout = QVBoxLayout()
-        layout.addWidget(menubar)
-        layout.addWidget(self.pole)
+
+        self.textEdit.resize(750, 500)
+        self.textEdit.move(25, 25)
+        self.save_btn.resize(75, 25)
+        self.save_btn.move(100, 525)
+        self.open_btn.resize(75, 25)
+        self.open_btn.move(175, 425)
+
+        layout.addWidget(self.textEdit)
+        h_layout = QHBoxLayout()
+        h_layout.addStretch(1)
+        h_layout.addWidget(self.save_btn)
+        h_layout.addWidget(self.open_btn)
+        layout.addLayout(h_layout)
+
+        self.save_btn.clicked.connect(self.zapisz)
+        self.open_btn.clicked.connect(self.otworz)
+
         self.setLayout(layout)
 
         self.show()
 
+    def zapisz(self):
+        with open('bez_tytulu.txt', 'w') as f:
+            text = self.textEdit.toPlainText()
+            f.write(text)
+            f.close()
+
+
+    def zapisz_jako(self):
+        filename = QFileDialog.getSaveFileName(self, 'Zapisz plik jako', 'C:\\', '*.txt')
+        if filename[0].endswith('.txt'):
+            with open(filename[0], 'w') as f:
+                text = self.textEdit.toPlainText()
+                f.write(text)
+                f.close()
+
+
+    def otworz(self):
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setFilter(QDir.Files)
+
+        if dialog.exec_():
+            filename = dialog.selectedFiles()
+
+            if filename[0].endswith('.txt'):
+                with open(filename[0], 'r') as f:
+                    text = f.read()
+                    self.textEdit.setPlainText(text)
+                    f.close()
 
 
 
 app = QApplication(sys.argv)
-exe = TextBox()
+exe = Notepad()
 sys.exit(app.exec_())
