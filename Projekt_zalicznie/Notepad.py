@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QDir, QDateTime
 from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QApplication, QFileDialog, QPushButton, QHBoxLayout, \
-    QMainWindow, QAction, qApp
+    QMainWindow, QAction, qApp, QMessageBox
 
 
 class Notepad(QWidget):
@@ -88,6 +88,13 @@ class Notepad(QWidget):
         # self.textEdit.selectionChanged.connect(self.textEdit.setText(''))
         #nie działa
 
+    def zaznacz(self):
+        self.textEdit.selectAll()
+
+    def datagodzina(self):
+        text = QDateTime.currentDateTime().toString()
+        self.textEdit.setText(text)
+
 
 class Menu(QMainWindow):
     def __init__(self):
@@ -163,6 +170,25 @@ class Menu(QMainWindow):
         menuedycja.addAction(usun)
         usun.triggered.connect(self.usun)
 
+        menuedycja.addSeparator()
+
+        zaznacz = QAction('Zaznacz wszystko', self)
+        zaznacz.setShortcut('Ctrl+A')
+        menuedycja.addAction(zaznacz)
+        zaznacz.triggered.connect(self.zaznacz)
+
+        data = QAction('Data/godzina', self)
+        data.setShortcut('F5')
+        menuedycja.addAction(data)
+        data.triggered.connect(self.datagodzina)
+
+        menupomoc = menubar.addMenu('Pomoc')
+
+        info = QAction('Notatnik - informacje', self)
+        menupomoc.addAction(info)
+        info.triggered.connect(self.info)
+
+
         self.show()
 
     def nowy(self):
@@ -191,6 +217,15 @@ class Menu(QMainWindow):
 
     def usun(self):
         self.form_widget.usun()
+
+    def zaznacz(self):
+        self.form_widget.zaznacz()
+
+    def datagodzina(self):
+        self.form_widget.datagodzina()
+
+    def info(self):
+        QMessageBox.about(self, 'Aplikacja', 'Prosty notatnik, na zaliczenie zajęć Programowanie wieloplatformowe QT')
 
 
 app = QApplication(sys.argv)
