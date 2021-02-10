@@ -33,6 +33,8 @@ class Notepad(QWidget):
 
         self.setLayout(layout)
 
+        QApplication.clipboard().dataChanged.connect(self.wklej)
+
         # self.show()
 
     def zapisz(self):
@@ -65,6 +67,26 @@ class Notepad(QWidget):
 
     def wyczysc(self):
         self.textEdit.clear()
+
+    def cofnij(self):
+        self.textEdit.undo()
+
+    def wytnij(self):
+        # self.textEdit.selectionChanged.connect(self.textEdit.cut())
+        self.textEdit.cut()
+        #kopiuje ale nie usuwa tekstu
+
+    def kopiuj(self):
+        self.textEdit.copy()
+
+    def wklej(self):
+        text = QApplication.clipboard().text()
+        self.textEdit.insertPlainText(text)
+
+    def usun(self):
+        pass
+        # self.textEdit.selectionChanged.connect(self.textEdit.setText(''))
+        #nie działa
 
 
 class Menu(QMainWindow):
@@ -112,6 +134,35 @@ class Menu(QMainWindow):
         menuplik.addAction(zakoncz)
         zakoncz.triggered.connect(qApp.quit)
 
+        menuedycja = menubar.addMenu('Edycja')
+
+        cofnij = QAction('Cofnij', self)
+        cofnij.setShortcut('Ctrl+Z')
+        menuedycja.addAction(cofnij)
+        cofnij.triggered.connect(self.cofnij)
+
+        menuedycja.addSeparator()
+
+        wytnij = QAction('Wytnij', self)
+        wytnij.setShortcut('Ctrl+X')
+        menuedycja.addAction(wytnij)
+        wytnij.triggered.connect(self.wytnij)
+
+        kopiuj = QAction('Kopiuj', self)
+        kopiuj.setShortcut('Ctrl+C')
+        menuedycja.addAction(kopiuj)
+        kopiuj.triggered.connect(self.kopiuj)
+
+        wklej = QAction('Wklej', self)
+        wklej.setShortcut('Ctrl+V')
+        menuedycja.addAction(wklej)
+        wklej.triggered.connect(self.wklej)
+
+        usun = QAction('Usuń zaznaczony tekst', self)
+        usun.setShortcut('del')
+        menuedycja.addAction(usun)
+        usun.triggered.connect(self.usun)
+
         self.show()
 
     def nowy(self):
@@ -125,6 +176,21 @@ class Menu(QMainWindow):
 
     def zapisz_jako(self):
         self.form_widget.zapisz_jako()
+
+    def cofnij(self):
+        self.form_widget.cofnij()
+
+    def wytnij(self):
+        self.form_widget.wytnij()
+
+    def kopiuj(self):
+        self.form_widget.kopiuj()
+
+    def wklej(self):
+        self.form_widget.wklej()
+
+    def usun(self):
+        self.form_widget.usun()
 
 
 app = QApplication(sys.argv)
