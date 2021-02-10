@@ -14,6 +14,7 @@ class Notepad(QWidget):
         self.initUI()
 
     def initUI(self):
+        PATHNAME = ''
         layout = QVBoxLayout()
 
         self.textEdit.resize(750, 500)
@@ -37,11 +38,21 @@ class Notepad(QWidget):
 
         # self.show()
 
+
     def zapisz(self):
-        with open('bez_tytulu.txt', 'w') as f:
-            text = self.textEdit.toPlainText()
-            f.write(text)
-            f.close()
+        global PATHNAME
+        if PATHNAME == '':
+            with open('bez_tytulu.txt', 'w') as f:
+                text = self.textEdit.toPlainText()
+                f.write(text)
+                f.close()
+        else:
+            filename = PATHNAME
+            if filename[0].endswith('.txt'):
+                with open(filename[0], 'w') as f:
+                    text = self.textEdit.toPlainText()
+                    f.write(text)
+                    f.close()
 
     def zapisz_jako(self):
         filename = QFileDialog.getSaveFileName(self, 'Zapisz plik jako', 'C:\\', '*.txt')
@@ -52,13 +63,15 @@ class Notepad(QWidget):
                 f.close()
 
     def otworz(self):
+        global PATHNAME
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.AnyFile)
         dialog.setFilter(QDir.Files)
 
         if dialog.exec_():
             filename = dialog.selectedFiles()
-
+            PATHNAME = filename
+            print(PATHNAME)
             if filename[0].endswith('.txt'):
                 with open(filename[0], 'r') as f:
                     text = f.read()
@@ -66,7 +79,9 @@ class Notepad(QWidget):
                     f.close()
 
     def wyczysc(self):
+        global PATHNAME
         self.textEdit.clear()
+        PATHNAME = ''
 
     def cofnij(self):
         self.textEdit.undo()
@@ -93,7 +108,8 @@ class Notepad(QWidget):
 
     def datagodzina(self):
         text = QDateTime.currentDateTime().toString()
-        self.textEdit.setText(text)
+        text_from_text_edit = self.textEdit.toPlainText()
+        self.textEdit.setText(text_from_text_edit + ' ' + text)
 
 
 class Menu(QMainWindow):
