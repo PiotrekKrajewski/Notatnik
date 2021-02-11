@@ -16,7 +16,7 @@ class Notepad(QWidget):
     def initUI(self):
         PATHNAME = ''
         layout = QVBoxLayout()
-
+        self.textEdit.setAcceptRichText(False)
         self.textEdit.resize(750, 500)
         self.textEdit.move(25, 25)
         self.save_btn.resize(75, 25)
@@ -87,9 +87,9 @@ class Notepad(QWidget):
         self.textEdit.undo()
 
     def wytnij(self):
-        # self.textEdit.selectionChanged.connect(self.textEdit.cut())
-        self.textEdit.cut()
-        #kopiuje ale nie usuwa tekstu
+        #if self.textEdit.selectionChanged() == True:
+        #    self.textEdit.selectionChanged.connect(self.textEdit.cut)
+        self.textEdit.cut(self)
 
     def kopiuj(self):
         self.textEdit.copy()
@@ -99,9 +99,17 @@ class Notepad(QWidget):
         self.textEdit.insertPlainText(text)
 
     def usun(self):
-        pass
-        # self.textEdit.selectionChanged.connect(self.textEdit.setText(''))
-        #nie działa
+        #text = self.textEdit.toPlainText()
+        new_text = ''
+        #cursor = self.textEdit.textCursor()
+        #print(cursor.selectionStart(), cursor.selectionEnd())
+        #for i in range(0, cursor.selectionStart()):
+            # new_text = new_text + new_text.join(text[i])
+        #    new_text = ''
+        #for i in range(cursor.selectionEnd(), len(text)):
+            # new_text = new_text + new_text.join(text[i])
+        #    new_text = ''
+        self.textEdit.insertPlainText(new_text)
 
     def zaznacz(self):
         self.textEdit.selectAll()
