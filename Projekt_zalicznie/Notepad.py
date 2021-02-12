@@ -31,12 +31,9 @@ class Notepad(QWidget):
 
         self.save_btn.clicked.connect(self.zapisz)
         self.open_btn.clicked.connect(self.otworz)
-
         self.setLayout(layout)
 
         QApplication.clipboard().dataChanged.connect(self.wklej)
-
-        # self.show()
 
 
     def zapisz(self):
@@ -87,9 +84,7 @@ class Notepad(QWidget):
         self.textEdit.undo()
 
     def wytnij(self):
-        #if self.textEdit.selectionChanged() == True:
-        #    self.textEdit.selectionChanged.connect(self.textEdit.cut)
-        self.textEdit.cut(self)
+        self.textEdit.cut()
 
     def kopiuj(self):
         self.textEdit.copy()
@@ -99,16 +94,7 @@ class Notepad(QWidget):
         self.textEdit.insertPlainText(text)
 
     def usun(self):
-        #text = self.textEdit.toPlainText()
         new_text = ''
-        #cursor = self.textEdit.textCursor()
-        #print(cursor.selectionStart(), cursor.selectionEnd())
-        #for i in range(0, cursor.selectionStart()):
-            # new_text = new_text + new_text.join(text[i])
-        #    new_text = ''
-        #for i in range(cursor.selectionEnd(), len(text)):
-            # new_text = new_text + new_text.join(text[i])
-        #    new_text = ''
         self.textEdit.insertPlainText(new_text)
 
     def zaznacz(self):
@@ -123,10 +109,8 @@ class Notepad(QWidget):
 class Menu(QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.form_widget = Notepad()
         self.setCentralWidget(self.form_widget)
-
         self.initUI()
 
     def initUI(self):
@@ -211,7 +195,6 @@ class Menu(QMainWindow):
         info = QAction('Notatnik - informacje', self)
         menupomoc.addAction(info)
         info.triggered.connect(self.info)
-
 
         self.show()
 
