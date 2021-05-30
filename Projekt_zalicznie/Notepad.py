@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QApplication, QFile
 
 
 class Notepad(QWidget):
+
     def __init__(self):
         super().__init__()
         self.textEdit = QTextEdit(self)
@@ -14,7 +15,8 @@ class Notepad(QWidget):
         self.initUI()
 
     def initUI(self):
-        PATHNAME = ''
+        global pathname
+        pathname = ''
         layout = QVBoxLayout()
         self.textEdit.setAcceptRichText(False)
         self.textEdit.resize(750, 500)
@@ -35,18 +37,18 @@ class Notepad(QWidget):
 
         QApplication.clipboard().dataChanged.connect(self.wklej)
 
-
     def zapisz(self):
-        global PATHNAME
-        if PATHNAME == '':
-            with open('bez_tytulu.txt', 'w') as f:
+        global pathname
+        if pathname == '':
+
+            with open('bez_tytulu.txt', 'w+', encoding="utf-8") as f:
                 text = self.textEdit.toPlainText()
                 f.write(text)
                 f.close()
         else:
-            filename = PATHNAME
+            filename = pathname
             if filename[0].endswith('.txt'):
-                with open(filename[0], 'w') as f:
+                with open(filename[0], 'w+', encoding="utf-8") as f:
                     text = self.textEdit.toPlainText()
                     f.write(text)
                     f.close()
@@ -54,31 +56,31 @@ class Notepad(QWidget):
     def zapisz_jako(self):
         filename = QFileDialog.getSaveFileName(self, 'Zapisz plik jako', 'C:\\', '*.txt')
         if filename[0].endswith('.txt'):
-            with open(filename[0], 'w') as f:
+            with open(filename[0], 'w', encoding="utf-8") as f:
                 text = self.textEdit.toPlainText()
                 f.write(text)
                 f.close()
 
     def otworz(self):
-        global PATHNAME
+        global pathname
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.AnyFile)
         dialog.setFilter(QDir.Files)
 
         if dialog.exec_():
             filename = dialog.selectedFiles()
-            PATHNAME = filename
-            print(PATHNAME)
+            pathname = filename
+            print(pathname)
             if filename[0].endswith('.txt'):
-                with open(filename[0], 'r') as f:
+                with open(filename[0], 'r', encoding="utf-8") as f:
                     text = f.read()
                     self.textEdit.setPlainText(text)
                     f.close()
 
     def wyczysc(self):
-        global PATHNAME
+        global pathname
         self.textEdit.clear()
-        PATHNAME = ''
+        pathname = ''
 
     def cofnij(self):
         self.textEdit.undo()
@@ -114,6 +116,7 @@ class Menu(QMainWindow):
         self.initUI()
 
     def initUI(self):
+
         self.setWindowTitle('Notatnik')
         self.setFixedSize(800, 600)
 
@@ -232,7 +235,8 @@ class Menu(QMainWindow):
         self.form_widget.datagodzina()
 
     def info(self):
-        QMessageBox.about(self, 'Aplikacja', 'Prosty notatnik, na zaliczenie zajęć Programowanie wieloplatformowe QT')
+        # QMessageBox.about(self, 'Aplikacja', 'Prosty notatnik, na zaliczenie zajęć Programowanie wieloplatformowe QT')
+        QMessageBox.about(self, 'Aplikacja', 'Prosty notatnik, na zaliczenie zajęć Podstawy pisania skryptów.')
 
 
 app = QApplication(sys.argv)
